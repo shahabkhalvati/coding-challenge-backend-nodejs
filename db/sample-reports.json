@@ -1,0 +1,32 @@
+{
+  "reports": [
+    {
+      "description": "Left overnight locked with an Abus Bordo 6000 lock. Came out the next morning, and the bike was gone. Thief had cut thru the lock with a grinder and left it at scene",
+      "license_number": "671701480M01",
+      "color": "Silver, gray or bare metal",
+      "type": "S2",
+      "owner_full_name": "Artur Hansjörg"
+    },
+    {
+      "description": "Gate was broken, cable lock was cut. Bike has a “Cykel” sticker on seat tube.",
+      "license_number": "812525129M03",
+      "color": "White",
+      "type": "2016 RITTE STAINLESS SNOB",
+      "owner_full_name": "Eckhart Micha"
+    },
+    {
+      "description": "Taken from garage",
+      "license_number": "FMD1306262",
+      "color": "Black",
+      "type": "FRAMED LIFTED 7",
+      "owner_full_name": "Mirjam Gunda"
+    },
+    {
+      "description": "rainbow decal salsa stem {Salsa}",
+      "license_number": "512686327",
+      "color": "Red, Yellow or Gold, and Purple",
+      "type": "1991 PINARELLO CX",
+      "owner_full_name": "Guntram Hubertus"
+    }
+  ]
+}
