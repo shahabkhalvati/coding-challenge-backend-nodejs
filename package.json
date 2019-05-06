@@ -1,0 +1,38 @@
+{
+  "name": "coding-challenge-backend-nodejs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:shahabkhalvati/coding-challenge-backend-nodejs.git",
+  "author": "Shahab Khalvati <contact@shahabkhalvati.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "docker-compose down && docker-compose up -d && node index.js",
+    "dev": "docker-compose down && docker-compose up -d && nodemon index.js",
+    "test": "mocha --watch --reporter min"
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ]
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.16.4",
+    "pg": "^7.10.0",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "expect.js": "^0.3.1",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.19.0",
+    "standard": "^12.0.1",
+    "supertest": "^4.0.2"
+  }
+}
