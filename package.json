@@ -7,8 +7,10 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "docker-compose down && docker-compose up -d && node index.js",
-    "dev": "docker-compose down && docker-compose up -d && nodemon index.js",
+    "start": "node index.js",
+    "start_db": "docker-compose up -d",
+    "stop_db": "docker-compose down",
+    "dev": "nodemon index.js",
     "test": "mocha --watch --reporter min"
   },
   "standard": {
