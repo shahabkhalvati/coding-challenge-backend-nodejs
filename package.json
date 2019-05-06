@@ -11,7 +11,7 @@
     "start_db": "docker-compose up -d",
     "stop_db": "docker-compose down",
     "dev": "nodemon index.js",
-    "test": "mocha --watch --reporter min"
+    "test": "mocha --watch --reporter min --recursive"
   },
   "standard": {
     "env": [
