@@ -11,3 +11,5 @@ The project uses a PostgreSQL database at default port (5432) and following info
 
 - Database connection config is changeable at config/db.js
 - `Docker-compose up -d` would start a db service using default configuration.
+- `yarn run start_db` to start PostgreSQL using docker
+- `yarn run stop_db` to stop PostgreSQL using docker
