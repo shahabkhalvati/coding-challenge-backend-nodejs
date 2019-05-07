@@ -87,8 +87,8 @@ describe('officers repository', function () {
 
     const id = (await findAll()).rows[0].id
 
-    const updateRestul = await officersRepository.remove(id)
-    expect(updateRestul).to.be.equal(1)
+    const updateResult = await officersRepository.remove(id)
+    expect(updateResult).to.be.equal(1)
 
     const officers = (await findAll()).rows
     expect(officers.length).to.equal(1)
