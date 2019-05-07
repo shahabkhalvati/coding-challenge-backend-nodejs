@@ -18,4 +18,7 @@ const echo = (req, res) => {
 app.use('/echo', echo)
 app.get('/', (req, res) => res.sendStatus(200))
 
+app.use('/', require('./routes/officers'))
+app.use('/', require('./routes/reports'))
+
 module.exports = app
