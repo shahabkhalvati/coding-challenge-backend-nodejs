@@ -18,7 +18,7 @@ const getAll = (db) => (whereClause = '') => {
 }
 
 const update = (db) => async (id, data) => {
-  const updateFields = R.join(' ')(
+  const updateFields = R.join(', ')(
     R.keys(data).map(
       (key, index) => `${key} = $${index + 2}`))
 
