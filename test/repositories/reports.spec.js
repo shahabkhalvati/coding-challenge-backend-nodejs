@@ -30,8 +30,8 @@ function findReport (id) {
   return db.query('SELECT * FROM reports WHERE id = $1', [id])
 }
 
-const omitId = R.omit(['id'])
-const omitAutoFields = R.omit(['id', 'associate_officer_id', 'date_of_submit', 'date_of_theft'])
+const omitAutoFields =
+  R.omit(['id', 'associate_officer_id', 'date_of_submit', 'date_of_theft'])
 
 describe('officers repository', function () {
   beforeEach(async function () {
