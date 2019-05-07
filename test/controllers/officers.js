@@ -28,7 +28,7 @@ describe('officers end point at /officers', function () {
     await clearOfficersTable()
   })
 
-  it('GET  /officers > should return all officers', async function () {
+  it('GET /officers > should return all officers', async function () {
     const seedOfficer = sampleOfficers[0]
     const seedOfficer2 = sampleOfficers[1]
     const seedOfficer3 = sampleOfficers[2]
@@ -49,7 +49,7 @@ describe('officers end point at /officers', function () {
       })
   })
 
-  it('DELETE  /officers/:id > should remove officers with that given id', async function () {
+  it('DELETE /officers/:id > should remove officers with that given id', async function () {
     const seedOfficer = sampleOfficers[0]
     const seedOfficer2 = sampleOfficers[1]
     const seedOfficer3 = sampleOfficers[2]
@@ -67,6 +67,20 @@ describe('officers end point at /officers', function () {
       .expect(res => {
         const returnedData = res.body
         expect(returnedData).to.deep.equal({})
+      })
+  })
+
+  it('POST /officers > should add an officer', async function () {
+    const officerToBeAddedInfo = sampleOfficers[2]
+
+    await request(server)
+      .post('/officers')
+      .send(officerToBeAddedInfo)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        const returnedData = res.body
+        expect(returnedData.id).to.be.above(0)
       })
   })
 
