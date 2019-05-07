@@ -3,7 +3,7 @@ const S = require('sanctuary')
 const common = require('../../bin/common')
 
 const schema = {
-  ID: common.isOptionalNumber,
+  id: common.isOptionalNumber,
   description: common.isOptionalString,
   license_number: common.isOptionalString,
   color: common.isOptionalString,

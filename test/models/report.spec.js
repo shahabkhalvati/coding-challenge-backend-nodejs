@@ -49,7 +49,7 @@ describe('models.officer', () => {
 
     it('happy path', () => {
       const builtModel = reportModel.from({
-        ID: 123,
+        id: 123,
         description: 'string',
         license_number: 'string',
         color: 'string',
@@ -60,7 +60,7 @@ describe('models.officer', () => {
       })
       const unboxedValue = S.either(fail)(S.I)(builtModel)
       expect(unboxedValue).to.deep.equal({
-        ID: 123,
+        id: 123,
         description: 'string',
         license_number: 'string',
         color: 'string',
@@ -71,10 +71,10 @@ describe('models.officer', () => {
       })
     })
     it('should fail if a provided field has incorrect type', () => {
-      expect(S.isLeft(reportModel.from({ ID: '123' }))).to.equal(true)
+      expect(S.isLeft(reportModel.from({ id: '123' }))).to.equal(true)
       expect(S.isLeft(reportModel.from({ description: 123 }))).to.equal(true)
       expect(S.isLeft(reportModel.from({
-        ID: '123',
+        id: '123',
         color: 'string'
       }))).to.equal(true)
     })
