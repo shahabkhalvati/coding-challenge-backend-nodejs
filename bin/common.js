@@ -24,6 +24,7 @@ const isNumber = R.is(Number)
 const isObject = R.is(Object)
 const isBoolean = R.is(Boolean)
 const isNil = R.isNil
+const isNilOrEmpty = R.either(isNil, R.isEmpty)
 
 const isOptional = (predicate) => R.anyPass([isNil, predicate])
 
@@ -32,6 +33,7 @@ module.exports = {
   print,
   focusedInspect,
   inspect,
+  isNilOrEmpty,
   isBoolean,
   isOptionalBoolean: isOptional(isBoolean),
   isString,
