@@ -26,7 +26,7 @@ describe('officers repository', function () {
   it('should be able to insert into db', async function () {
     const insertResult =
       await officersRepository.add({ name: 'some name' })
-    expect(insertResult).to.equal(1)
+    expect(insertResult).to.be.above(0)
 
     const officers = await findAll()
 

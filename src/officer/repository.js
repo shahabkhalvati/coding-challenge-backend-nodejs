@@ -2,8 +2,8 @@ const R = require('ramda')
 
 const add = (db) => ({ name }) => {
   return db.query(
-    `INSERT INTO officers (name) Values ($1)`, [name]
-  ).then(result => result.rowCount)
+    `INSERT INTO officers (name) Values ($1) RETURNING id`, [name]
+  ).then(result => result.rows[0].id)
 }
 
 const get = (db) => (id) => {
