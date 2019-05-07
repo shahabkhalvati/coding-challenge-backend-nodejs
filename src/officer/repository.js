@@ -34,7 +34,7 @@ const remove = (db) => async (id) => {
   ).then(result => result.rowCount)
 }
 
-module.exports = (db = require('../db/pg')) => {
+module.exports = (db = require('../../db/pg')) => {
   return {
     add: add(db),
     get: get(db),

@@ -1,6 +1,6 @@
 const R = require('ramda')
 const S = require('sanctuary')
-const common = require('../bin/common')
+const common = require('../../bin/common')
 
 const schema = {
   ID: common.isOptionalNumber,

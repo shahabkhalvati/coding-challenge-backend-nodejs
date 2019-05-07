@@ -1,6 +1,6 @@
 const S = require('sanctuary')
 const expect = require('chai').expect
-const officerModel = require('../../models/officer')
+const officerModel = require('../../src/officer/model')
 
 describe('models.officer', () => {
   describe('.isValid', () => {

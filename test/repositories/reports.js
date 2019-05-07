@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const reportsRepository = require('../../repositories/reports')()
+const reportsRepository = require('../../src/report/repository')()
 const db = require('../../db/pg')
 const R = require('ramda')
 

@@ -1,5 +1,5 @@
 const expect = require('chai').expect
-const officersRepository = require('../../repositories/officers')()
+const officersRepository = require('../../src/officer/repository')()
 const db = require('../../db/pg')
 const R = require('ramda')
 

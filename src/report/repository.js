@@ -1,5 +1,4 @@
 const R = require('ramda')
-// const inspect = require('../bin/common').inspect
 
 const add = (db) => (data) => {
   const keys = R.keys(data)
@@ -44,7 +43,7 @@ const remove = (db) => async (id) => {
   ).then(result => result.rowCount)
 }
 
-module.exports = (db = require('../db/pg')) => {
+module.exports = (db = require('../../db/pg')) => {
   return {
     add: add(db),
     get: get(db),
