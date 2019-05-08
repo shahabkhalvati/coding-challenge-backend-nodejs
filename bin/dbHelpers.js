@@ -2,7 +2,7 @@ const R = require('ramda')
 const common = require('./common')
 
 const strictEqualityComparer = (key, index) => `${key} = $${index + 1}`
-const looseEqualityComparer = (key, index) => `${key} LIKE $${index + 1}`
+const looseEqualityComparer = (key, index) => `${key} ILIKE $${index + 1}`
 
 const whereClauseFromModel =
   (conditionJoiner) =>

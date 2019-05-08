@@ -201,6 +201,39 @@ describe('reports end point at /reports', function () {
       })
   })
 
+  it('should filter reports given filter constraints (case-insensitive)', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    const reportToBeQueried = (await findAll()).rows[1]
+
+    await request(server)
+      .get('/reports')
+      .query({
+        type: R.toUpper(reportToBeQueried.type),
+        color: R.toUpper(reportToBeQueried.color)
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+      })
+
+    await request(server)
+      .get('/reports')
+      .query({ description: 'BROKEN' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+      })
+  })
+
   after(async function () {
     await clearReportsTable()
   })
