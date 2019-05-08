@@ -6,6 +6,14 @@ const server = require('../../server/index')
 const isValidReport = require('../../src/report/model').isValid
 
 const sampleReports = require('../../db/sample-reports').reports
+const sampleOfficers = require('../../db/sample-officers').officers
+
+function clearOfficersTable () {
+  return db.query(`DELETE FROM officers`)
+}
+function addOfficer ({ name }) {
+  return db.query(`INSERT INTO officers (name) VALUES ($1)`, [name])
+}
 
 function clearReportsTable () {
   return db.query(`DELETE FROM reports`)
@@ -42,7 +50,9 @@ const omitAutomaticsFromAll = R.map(omitAutomatics)
 
 describe('reports end point at /reports', function () {
   beforeEach(async function () {
-    await clearReportsTable()
+    await Promise.all([
+      clearOfficersTable(),
+      clearReportsTable()])
   })
 
   it('GET  /reports > should return all reports', async function () {
@@ -202,6 +212,39 @@ describe('reports end point at /reports', function () {
   })
 
   it('should filter reports given filter constraints (case-insensitive)', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    const reportToBeQueried = (await findAll()).rows[1]
+
+    await request(server)
+      .get('/reports')
+      .query({
+        type: R.toUpper(reportToBeQueried.type),
+        color: R.toUpper(reportToBeQueried.color)
+      })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+      })
+
+    await request(server)
+      .get('/reports')
+      .query({ description: 'BROKEN' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+      })
+  })
+
+  it('should return associate officer detail for report', async function () {
     const seedReport = sampleReports[0]
     const seedReport2 = sampleReports[1]
     const seedReport3 = sampleReports[2]
