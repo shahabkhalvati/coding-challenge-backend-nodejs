@@ -1,3 +1,6 @@
+const get = (officerRepository) =>
+  async (id) => officerRepository.get(id)
+
 const getAll = (officerRepository) =>
   async () => officerRepository.getAll()
 
@@ -12,6 +15,7 @@ const update = (officerRepository) =>
 
 module.exports = function (officerRepository = require('./repository')()) {
   return {
+    get: get(officerRepository),
     getAll: getAll(officerRepository),
     remove: remove(officerRepository),
     add: add(officerRepository),

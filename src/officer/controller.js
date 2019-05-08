@@ -3,6 +3,14 @@ const OfficerModel = require('./model')
 const Future = require('fluture')
 const S = require('sanctuary')
 
+async function get (req, res) {
+  const failed = () => res.sendStatus(500)
+  const success = (data) => res.status(200).json(data)
+
+  Future.tryP(() => Officers.get(req.params.id))
+    .fork(failed, success)
+}
+
 async function getAll (req, res) {
   const officers = await Officers.getAll()
   res.status(200).json(officers)
@@ -35,6 +43,7 @@ async function update (req, res) {
 }
 
 module.exports = {
+  get,
   getAll,
   remove,
   add,

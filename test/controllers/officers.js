@@ -109,6 +109,27 @@ describe('officers end point at /officers', function () {
     expect(editedOfficerData.rows[0].name).to.equal('sample name')
   })
 
+  it('GET /officers/:id > should return correct info for officer with given id', async function () {
+    const seedOfficer = sampleOfficers[0]
+    const seedOfficer2 = sampleOfficers[1]
+    const seedOfficer3 = sampleOfficers[2]
+
+    await addOfficer(seedOfficer)
+    await addOfficer(seedOfficer2)
+    await addOfficer(seedOfficer3)
+
+    const officerToBeQueried = (await findAll()).rows[1]
+
+    await request(server)
+      .get('/officers/' + officerToBeQueried.id)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        const returnedData = res.body
+        expect(returnedData).to.deep.equal(officerToBeQueried)
+      })
+  })
+
   after(async function () {
     await clearOfficersTable()
   })
