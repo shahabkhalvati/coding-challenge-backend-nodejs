@@ -30,9 +30,9 @@ function addReport ({
 function findAll () {
   return db.query('SELECT * FROM reports')
 }
-// function findReport (id) {
-//   return db.query('SELECT * FROM reports WHERE id = $1', [id])
-// }
+function findReport (id) {
+  return db.query('SELECT * FROM reports WHERE id = $1', [id])
+}
 
 const omitAutomatics =
   R.omit([
@@ -63,6 +63,92 @@ describe('reports end point at /reports', function () {
         expect(R.all(isValidReport)(returnedData)).to.equal(true)
         expect(omitAutomaticsFromAll(returnedData)).to.deep.equal([
           seedReport, seedReport2, seedReport3])
+      })
+  })
+
+  it('DELETE /reports/:id > should remove report with that given id', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    const idOfReportToBeRemoved = (await findAll()).rows[1].id
+
+    await request(server)
+      .delete('/reports/' + idOfReportToBeRemoved)
+      .expect(200)
+      .expect('Content-Type', 'text/plain; charset=utf-8')
+      .expect(res => {
+        const returnedData = res.body
+        expect(returnedData).to.deep.equal({})
+      })
+  })
+
+  it('POST /reports > should add a report', async function () {
+    const reportToBeAddedInfo = sampleReports[2]
+
+    await request(server)
+      .post('/reports')
+      .send(reportToBeAddedInfo)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        const returnedData = res.body
+        expect(returnedData.id).to.be.above(0)
+      })
+  })
+
+  it('PUT /reports/:id > should update info for report with given id', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    const idOfReportToBeEdited = (await findAll()).rows[1].id
+
+    await request(server)
+      .put('/reports/' + idOfReportToBeEdited)
+      .send(R.mergeRight(seedReport2, { description: 'new description', color: 'new color' }))
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        const returnedData = res.body
+        expect(returnedData).to.deep.equal({})
+      })
+
+    const editedReportData = await findReport(idOfReportToBeEdited)
+    expect(editedReportData.rows[0].description).to.equal('new description')
+    expect(editedReportData.rows[0].color).to.equal('new color')
+  })
+
+  it('GET /reports/:id > should return correct info for report with given id', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    const reportToBeQueried = (await findAll()).rows[1]
+
+    await request(server)
+      .get('/reports/' + reportToBeQueried.id)
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        const convertDateToString = (date) => date.toISOString()
+        const convertDates = R.evolve({
+          date_of_submit: convertDateToString,
+          date_of_theft: convertDateToString
+        })
+        expect(res.body).to.deep.equal(convertDates(reportToBeQueried))
       })
   })
 
