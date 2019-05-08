@@ -1,8 +1,34 @@
+const R = require('ramda')
+const common = require('../../bin/common')
+
+const removeOfficerFields =
+  R.omit(['associate_officer_id', 'officer_name'])
+
+const groupOfficerFields =
+  (report) => R.mergeRight(
+    report,
+    common.isNilOrEmpty(report.associate_officer_id)
+      ? { associate_officer: null }
+      : {
+        associate_officer: {
+          id: report.associate_officer_id,
+          name: report.officer_name
+        }
+      })
+
+const reshapeOfficerModel =
+  R.compose(removeOfficerFields, groupOfficerFields)
+
 const get = (reportRepository) =>
   async (id) => reportRepository.get(id)
+    .then(reshapeOfficerModel)
 
 const getAll = (reportRepository) =>
-  async (model) => reportRepository.getAll(model)
+  async (model) => {
+    return reportRepository
+      .getAll(model)
+      .then(R.map(reshapeOfficerModel))
+  }
 
 const remove = (reportRepository) =>
   async (id) => reportRepository.remove(id)

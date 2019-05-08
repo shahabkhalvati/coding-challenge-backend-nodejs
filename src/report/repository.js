@@ -18,7 +18,9 @@ const add = (db) => (data) => {
 
 const get = (db) => (id) => {
   return db.query(
-    `SELECT * FROM reports where id = $1`, [id])
+    `SELECT reports.*, officers.name officer_name FROM reports
+    LEFT JOIN officers ON reports.associate_officer_id = officers.id
+    WHERE reports.id = $1`, [id])
     .then(result => R.head(result.rows))
 }
 const getAll = (db) => (queryModel = {}) => {
@@ -29,7 +31,9 @@ const getAll = (db) => (queryModel = {}) => {
     dbHelpers.clauseParamsFromModel(usingStrictComparer)(queryModel)
 
   return db.query(
-    `SELECT * FROM reports ${whereClause}`, clauseParams)
+    `SELECT reports.*, officers.name officer_name FROM reports
+    LEFT JOIN officers ON reports.associate_officer_id = officers.id
+    ${whereClause}`, clauseParams)
     .then(result => result.rows)
 }
 

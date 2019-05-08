@@ -31,9 +31,11 @@ function findReport (id) {
 }
 
 const omitAutoFields =
-  R.omit(['id', 'associate_officer_id', 'date_of_submit', 'date_of_theft'])
+  R.omit([
+    'id', 'associate_officer_id', 'date_of_submit', 'date_of_theft', 'officer_name'
+  ])
 
-describe('officers repository', function () {
+describe('reports repository', function () {
   beforeEach(async function () {
     await clearReportsTable()
   })

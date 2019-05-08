@@ -12,7 +12,7 @@ function clearOfficersTable () {
   return db.query(`DELETE FROM officers`)
 }
 function addOfficer ({ name }) {
-  return db.query(`INSERT INTO officers (name) VALUES ($1)`, [name])
+  return db.query(`INSERT INTO officers (name) VALUES ($1) RETURNING id`, [name])
 }
 
 function clearReportsTable () {
@@ -30,7 +30,8 @@ function addReport ({
     `INSERT INTO reports
       (description, license_number, color, type, owner_full_name, associate_officer_id)
         VALUES
-          ($1, $2, $3, $4, $5, $6)`,
+          ($1, $2, $3, $4, $5, $6)
+        RETURNING id`,
     [
       description, license_number, color, type, owner_full_name, associate_officer_id
     ])
@@ -44,8 +45,14 @@ function findReport (id) {
 
 const omitAutomatics =
   R.omit([
-    'id', 'associate_officer_id', 'date_of_submit', 'date_of_theft', 'is_resolved'
+    'id',
+    'associate_officer_id',
+    'date_of_submit',
+    'date_of_theft',
+    'is_resolved',
+    'associate_officer'
   ])
+const omitOfficerFields = R.omit(['associate_officer', 'associate_officer_id'])
 const omitAutomaticsFromAll = R.map(omitAutomatics)
 
 describe('reports end point at /reports', function () {
@@ -70,6 +77,7 @@ describe('reports end point at /reports', function () {
       .expect('Content-Type', /json/)
       .expect(res => {
         const returnedData = res.body
+
         expect(R.all(isValidReport)(returnedData)).to.equal(true)
         expect(omitAutomaticsFromAll(returnedData)).to.deep.equal([
           seedReport, seedReport2, seedReport3])
@@ -158,7 +166,10 @@ describe('reports end point at /reports', function () {
           date_of_submit: convertDateToString,
           date_of_theft: convertDateToString
         })
-        expect(res.body).to.deep.equal(convertDates(reportToBeQueried))
+        expect(
+          omitOfficerFields(res.body))
+          .to.deep.equal(
+            omitOfficerFields(convertDates(reportToBeQueried)))
       })
   })
 
@@ -244,36 +255,49 @@ describe('reports end point at /reports', function () {
       })
   })
 
-  it('should return associate officer detail for report', async function () {
+  it('should return associate officer detail', async function () {
     const seedReport = sampleReports[0]
     const seedReport2 = sampleReports[1]
     const seedReport3 = sampleReports[2]
+    const seedOfficer = sampleOfficers[0]
+    const seedOfficer2 = sampleOfficers[1]
 
-    await addReport(seedReport)
-    await addReport(seedReport2)
-    await addReport(seedReport3)
+    const officerId = (await addOfficer(seedOfficer)).rows[0].id
+    await Promise.all([
+      addOfficer(seedOfficer2),
+      addReport(seedReport2),
+      addReport(seedReport3)
+    ])
 
-    const reportToBeQueried = (await findAll()).rows[1]
+    const reportId =
+      (await addReport(
+        R.mergeRight(
+          seedReport, {
+            associate_officer_id: officerId
+          }))).rows[0].id
+
+    await db.query(
+      `UPDATE officers set current_case_id = $1 WHERE id = $2`,
+      [reportId, officerId])
 
     await request(server)
-      .get('/reports')
-      .query({
-        type: R.toUpper(reportToBeQueried.type),
-        color: R.toUpper(reportToBeQueried.color)
-      })
+      .get('/reports/' + reportId)
       .expect(200)
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+        expect(res.body.associate_officer.id).to.equal(officerId)
+        expect(res.body.associate_officer.name).to.equal(seedOfficer.name)
       })
 
     await request(server)
       .get('/reports')
-      .query({ description: 'BROKEN' })
       .expect(200)
       .expect('Content-Type', /json/)
       .expect(res => {
-        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+        const changedReport = res.body.find(report => report.id === reportId)
+
+        expect(changedReport.associate_officer.id).to.equal(officerId)
+        expect(changedReport.associate_officer.name).to.equal(seedOfficer.name)
       })
   })
 
