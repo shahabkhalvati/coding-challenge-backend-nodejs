@@ -16,9 +16,9 @@ function addOfficer ({ name }) {
 function findAll () {
   return db.query('SELECT * FROM officers')
 }
-// function findOfficer (id) {
-//   return db.query('SELECT * FROM officers WHERE id = $1', [id])
-// }
+function findOfficer (id) {
+  return db.query('SELECT * FROM officers WHERE id = $1', [id])
+}
 
 const omitAutomatics = R.omit(['id', 'current_case_id'])
 const omitAutomaticsFromAll = R.map(omitAutomatics)
@@ -82,6 +82,31 @@ describe('officers end point at /officers', function () {
         const returnedData = res.body
         expect(returnedData.id).to.be.above(0)
       })
+  })
+
+  it('PUT /officers/:id > should update info for officer with given id', async function () {
+    const seedOfficer = sampleOfficers[0]
+    const seedOfficer2 = sampleOfficers[1]
+    const seedOfficer3 = sampleOfficers[2]
+
+    await addOfficer(seedOfficer)
+    await addOfficer(seedOfficer2)
+    await addOfficer(seedOfficer3)
+
+    const idOfOfficerToBeEdited = (await findAll()).rows[1].id
+
+    await request(server)
+      .put('/officers/' + idOfOfficerToBeEdited)
+      .send(R.mergeRight(seedOfficer2, { name: 'sample name' }))
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        const returnedData = res.body
+        expect(returnedData).to.deep.equal({})
+      })
+
+    const editedOfficerData = await findOfficer(idOfOfficerToBeEdited)
+    expect(editedOfficerData.rows[0].name).to.equal('sample name')
   })
 
   after(async function () {

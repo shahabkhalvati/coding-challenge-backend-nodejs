@@ -7,10 +7,14 @@ const remove = (officerRepository) =>
 const add = (officerRepository) =>
   async (model) => officerRepository.add(model)
 
+const update = (officerRepository) =>
+  async (id, model) => officerRepository.update(id, model)
+
 module.exports = function (officerRepository = require('./repository')()) {
   return {
     getAll: getAll(officerRepository),
     remove: remove(officerRepository),
-    add: add(officerRepository)
+    add: add(officerRepository),
+    update: update(officerRepository)
   }
 }
