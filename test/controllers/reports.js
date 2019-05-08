@@ -152,6 +152,55 @@ describe('reports end point at /reports', function () {
       })
   })
 
+  it('should return empty array when query is sent but nothing matches the query', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    await request(server)
+      .get('/reports')
+      .query({ type: 'new-type' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body).to.deep.equal([])
+      })
+  })
+
+  it('should filter reports given filter constraints', async function () {
+    const seedReport = sampleReports[0]
+    const seedReport2 = sampleReports[1]
+    const seedReport3 = sampleReports[2]
+
+    await addReport(seedReport)
+    await addReport(seedReport2)
+    await addReport(seedReport3)
+
+    const reportToBeQueried = (await findAll()).rows[1]
+
+    await request(server)
+      .get('/reports')
+      .query({ type: reportToBeQueried.type, color: reportToBeQueried.color })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+      })
+
+    await request(server)
+      .get('/reports')
+      .query({ description: 'broken' })
+      .expect(200)
+      .expect('Content-Type', /json/)
+      .expect(res => {
+        expect(res.body[0] && res.body[0].id).to.equal(reportToBeQueried.id)
+      })
+  })
+
   after(async function () {
     await clearReportsTable()
   })

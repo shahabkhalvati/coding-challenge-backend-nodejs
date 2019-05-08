@@ -1,4 +1,5 @@
 const R = require('ramda')
+const dbHelpers = require('../../bin/dbHelpers')
 
 const add = (db) => (data) => {
   const keys = R.keys(data)
@@ -20,9 +21,15 @@ const get = (db) => (id) => {
     `SELECT * FROM reports where id = $1`, [id])
     .then(result => R.head(result.rows))
 }
-const getAll = (db) => (whereClause = '') => {
+const getAll = (db) => (queryModel = {}) => {
+  const usingStrictComparer = false
+  const whereClause =
+    dbHelpers.orClauseFromModel(usingStrictComparer)(queryModel)
+  const clauseParams =
+    dbHelpers.clauseParamsFromModel(usingStrictComparer)(queryModel)
+
   return db.query(
-    `SELECT * FROM reports ${whereClause}`)
+    `SELECT * FROM reports ${whereClause}`, clauseParams)
     .then(result => result.rows)
 }
 

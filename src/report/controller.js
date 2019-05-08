@@ -12,7 +12,7 @@ async function get (req, res) {
 }
 
 async function getAll (req, res) {
-  const reports = await Reports.getAll()
+  const reports = await Reports.getAll(req.query)
   res.status(200).json(reports)
 }
 async function remove (req, res) {

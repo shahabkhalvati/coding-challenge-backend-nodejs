@@ -2,7 +2,7 @@ const get = (reportRepository) =>
   async (id) => reportRepository.get(id)
 
 const getAll = (reportRepository) =>
-  async () => reportRepository.getAll()
+  async (model) => reportRepository.getAll(model)
 
 const remove = (reportRepository) =>
   async (id) => reportRepository.remove(id)
