@@ -1,5 +1,4 @@
 const Reports = require('./business')()
-const Officers = require('../officer/business')()
 const ReportModel = require('./model')
 const Future = require('fluture')
 const S = require('sanctuary')
