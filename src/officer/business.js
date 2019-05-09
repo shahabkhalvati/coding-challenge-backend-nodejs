@@ -12,7 +12,7 @@ const remove = (officerRepository) =>
 const add = (officerRepository) =>
   async (model) => {
     const result = await officerRepository.add(model)
-    reportAssigner.assignReport()
+    await reportAssigner.assignReport()
     return result
   }
 

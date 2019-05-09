@@ -37,8 +37,8 @@ const remove = (reportRepository) =>
 
 const add = (reportRepository) =>
   async (model) => {
-    const result = reportRepository.add(model)
-    reportAssigner.assignReport()
+    const result = await reportRepository.add(model)
+    await reportAssigner.assignReport()
     return result
   }
 
@@ -56,7 +56,7 @@ const update = (reportRepository) =>
 
       if (Number(officersCurrentCaseId) === Number(id)) {
         await Officers.update(officerId, { current_case_id: null })
-        reportAssigner.assignReport()
+        await reportAssigner.assignReport()
       }
     }
 
