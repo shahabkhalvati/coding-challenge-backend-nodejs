@@ -18,7 +18,7 @@ db.query(`
     type TEXT,
     owner_full_name TEXT,
     is_resolved BOOLEAN NOT NULL DEFAULT FALSE,
-    associate_officer_id INTEGER REFERENCES officers (ID)
+    associate_officer_id INTEGER REFERENCES officers (ID) ON DELETE CASCADE
   );
 
   ALTER TABLE officers
