@@ -1,3 +1,5 @@
+const reportAssigner = require('../ReportAssigner')()
+
 const get = (officerRepository) =>
   async (id) => officerRepository.get(id)
 
@@ -8,7 +10,11 @@ const remove = (officerRepository) =>
   async (id) => officerRepository.remove(id)
 
 const add = (officerRepository) =>
-  async (model) => officerRepository.add(model)
+  async (model) => {
+    const result = await officerRepository.add(model)
+    reportAssigner.assignReport()
+    return result
+  }
 
 const update = (officerRepository) =>
   async (id, model) => officerRepository.update(id, model)

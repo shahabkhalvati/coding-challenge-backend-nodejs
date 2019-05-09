@@ -6,5 +6,6 @@ router.get('/reports', controller.getAll)
 router.delete('/reports/:id', controller.remove)
 router.post('/reports', controller.add)
 router.put('/reports/:id', controller.update)
+router.post('/reports/:id/resolve', controller.resolve)
 
 module.exports = router

@@ -1,4 +1,5 @@
 const Reports = require('./business')()
+const Officers = require('../officer/business')()
 const ReportModel = require('./model')
 const Future = require('fluture')
 const S = require('sanctuary')
@@ -41,11 +42,28 @@ async function update (req, res) {
 
   S.either(badRequest)(updateReport)(ReportModel.from(req.body))
 }
+async function resolve (req, res) {
+  const reportId = req.params.id
+
+  if (!(reportId)) {
+    res.sendStatus(400)
+    return
+  }
+
+  const failed = () => res.sendStatus(500)
+  const success = () => res.sendStatus(200)
+
+  Future.tryP(
+    async () =>
+      Reports.update(reportId, { is_resolved: true }))
+    .fork(failed, success)
+}
 
 module.exports = {
   get,
   getAll,
   remove,
   add,
-  update
+  update,
+  resolve
 }

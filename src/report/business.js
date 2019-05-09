@@ -1,5 +1,7 @@
 const R = require('ramda')
 const common = require('../../bin/common')
+const reportAssigner = require('../ReportAssigner')()
+const Officers = require('../officer/business')()
 
 const removeOfficerFields =
   R.omit(['associate_officer_id', 'officer_name'])
@@ -34,10 +36,32 @@ const remove = (reportRepository) =>
   async (id) => reportRepository.remove(id)
 
 const add = (reportRepository) =>
-  async (model) => reportRepository.add(model)
+  async (model) => {
+    const result = reportRepository.add(model)
+    reportAssigner.assignReport()
+    return result
+  }
 
 const update = (reportRepository) =>
-  async (id, model) => reportRepository.update(id, model)
+  async (id, model) => {
+    const result = await reportRepository.update(id, model)
+    if (model.is_resolved) {
+      const currentReport = (await get(reportRepository)(id))
+      const officerId =
+        currentReport.associate_officer && currentReport.associate_officer.id
+
+      const officersCurrentCaseId = officerId && (
+        await Officers.get(officerId))
+        .current_case_id
+
+      if (Number(officersCurrentCaseId) === Number(id)) {
+        await Officers.update(officerId, { current_case_id: null })
+        reportAssigner.assignReport()
+      }
+    }
+
+    return result
+  }
 
 module.exports = function (reportRepository = require('./repository')()) {
   return {

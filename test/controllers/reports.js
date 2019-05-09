@@ -37,10 +37,10 @@ function addReport ({
     ])
 }
 function findAll () {
-  return db.query('SELECT * FROM reports')
+  return db.query('SELECT * FROM reports ORDER BY id')
 }
 function findReport (id) {
-  return db.query('SELECT * FROM reports WHERE id = $1', [id])
+  return db.query('SELECT * FROM reports WHERE id = $1 ORDER BY id', [id])
 }
 
 const omitAutomatics =
@@ -300,6 +300,27 @@ describe('reports end point at /reports', function () {
         expect(changedReport.associate_officer.name).to.equal(seedOfficer.name)
       })
   })
+
+  it('POST /reports/:id/resolve should resolve report',
+    async function () {
+      const seedReport = sampleReports[0]
+      const reportId =
+        (await addReport(seedReport))
+          .rows[0].id
+
+      await request(server)
+        .post(`/reports/${reportId}/resolve`)
+        .expect(200)
+        .expect('Content-Type', 'text/plain; charset=utf-8')
+        .expect(res => {
+          const returnedData = res.body
+          expect(returnedData).to.deep.equal({})
+        })
+
+      const reports = await findAll()
+      expect(reports.rows[0].id).to.equal(reportId)
+      expect(reports.rows[0].is_resolved).to.equal(true)
+    })
 
   after(async function () {
     await clearReportsTable()
