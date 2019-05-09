@@ -18,9 +18,6 @@ const assignReport =
             findAvailableOfficer(transaction),
             findUnresolvedReport(transaction)])
 
-        // common.focusedInspect('officers')(availableOfficerIds)
-        // common.focusedInspect('reports')(availableReportIds)
-
         if (common.isNilOrEmpty(availableOfficerIds.rows) ||
           common.isNilOrEmpty(availableReportIds.rows)) {
           return 0
@@ -28,6 +25,7 @@ const assignReport =
 
         const availableOfficerId = availableOfficerIds.rows[0].id
         const availableReportId = availableReportIds.rows[0].id
+
         const reportRepository = require('./report/repository')(transaction)
         const officerRepository = require('./officer/repository')(transaction)
 
