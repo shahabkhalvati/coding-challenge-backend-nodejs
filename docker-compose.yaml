@@ -6,9 +6,9 @@ services:
     image: postgres:11.2
     restart: always
     environment:
-      POSTGRES_USER: usr
-      POSTGRES_PASSWORD: pswd
-      POSTGRES_DB: bike_api
+      - POSTGRES_USER=usr
+      - POSTGRES_PASSWORD=pswd
+      - POSTGRES_DB=bike_api
     ports:
       - 5432:5432
 
